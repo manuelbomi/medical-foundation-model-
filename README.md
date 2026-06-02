@@ -29,7 +29,7 @@ This project implements a principled pipeline that bridges the gap between pretr
 flowchart TB
     subgraph Foundation["Pretrained Foundation Model"]
         IM[ImageNet / LAION Weights]
-        ARCH[ResNet, EfficientNet, ViT, Swin, ConvNeXt]
+        ARCH[ResNet, ViT, Swin, ConvNeXt, EfficientNet]
     end
     
     subgraph Adapt["Domain Adaptation"]
