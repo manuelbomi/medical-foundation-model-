@@ -26,7 +26,7 @@ This project implements a principled pipeline that bridges the gap between pretr
 ## Architecture
 
 ```mermaid
-flowchart TBz
+flowchart TB
     subgraph Foundation["Pretrained Foundation Model"]
         IM[ImageNet / LAION Weights]
         ARCH[ResNet, EfficientNet, ViT, Swin, ConvNeXt]
