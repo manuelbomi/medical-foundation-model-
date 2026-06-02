@@ -25,55 +25,53 @@ This project implements a principled pipeline that bridges the gap between pretr
 
 ## Architecture
 
-```mermaid
 flowchart TB
     subgraph Foundation["Pretrained Foundation Model"]
         IM[ImageNet / LAION Weights]
-        ARCH[ResNet | EfficientNet | ViT | Swin | ConvNeXt]
+        ARCH[ResNet, EfficientNet, ViT, Swin, ConvNeXt]
     end
-
+    
     subgraph Adapt["Domain Adaptation"]
         SC[Single-Channel Adaptation]
         FDA[Fourier Domain Adaptation]
         DANN[Domain-Adversarial Training]
         MMD[MMD Feature Alignment]
     end
-
+    
     subgraph Curriculum["Curriculum Learning"]
         DS[Difficulty Scoring]
         SPL[Self-Paced Learning]
         TS[Teacher-Student Mentoring]
         SCHED[Curriculum Scheduler]
     end
-
+    
     subgraph Transfer["Progressive Transfer"]
         GU[Gradual Unfreezing]
         LR[Layer-wise LR Decay]
         RS[Resolution Scaling]
         KD[Knowledge Distillation]
     end
-
+    
     subgraph Tasks["Clinical Tasks"]
         MAM[Mammography Classification]
         SEG[Lesion Segmentation]
         DET[Abnormality Detection]
         FS[Few-Shot Rare Pathology]
     end
-
+    
     Foundation --> Adapt
     Adapt --> Curriculum
     Curriculum --> Transfer
     Transfer --> Tasks
-
+    
     subgraph Eval["Evaluation"]
         FID[Frechet Inception Distance]
         CKA[CKA Similarity]
         DG[Domain Gap Metrics]
         TA[Transfer Analysis]
     end
-
+    
     Tasks --> Eval
-```
 
 ## Results
 
