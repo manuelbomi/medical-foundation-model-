@@ -1,0 +1,58 @@
+# Few-Shot Learning Configuration for Rare Pathology Detection
+
+model:
+  backbone: swin_base
+  pretrained: true
+  input_channels: 1
+  target_resolution: 384
+  channel_strategy: average
+  feature_dim: 1024
+
+few_shot:
+  method: prototypical  # prototypical, maml
+  n_way: 5
+  n_support: 5
+  n_query: 15
+  n_episodes_train: 200
+  n_episodes_eval: 600
+
+  prototypical:
+    distance: euclidean  # euclidean, cosine
+    temperature: 1.0
+    use_projection: true
+
+  maml:
+    inner_lr: 0.01
+    inner_steps: 5
+    first_order: true  # first-order approximation for speed
+
+  augmentation:
+    factor: 10
+    elastic_deformation: true
+    intensity_augmentation: true
+    geometric_augmentation: true
+
+rare_pathologies:
+  - architectural_distortion
+  - skin_thickening
+  - axillary_lymphadenopathy
+  - nipple_retraction
+  - focal_asymmetry
+
+training:
+  meta_epochs: 200
+  meta_lr: 0.0001
+  meta_weight_decay: 0.01
+  use_amp: false  # MAML second-order requires full precision
+  patience: 30
+  seed: 42
+
+data:
+  base_classes_dir: data/mammography/base_classes
+  novel_classes_dir: data/mammography/rare_pathologies
+  val_split: 0.2
+
+output:
+  dir: outputs/few_shot
+  save_embeddings: true
+  visualize_prototypes: true

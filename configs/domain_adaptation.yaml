@@ -1,0 +1,80 @@
+# Domain Adaptation Configuration for Medical Foundation Model
+# Adapts pretrained ImageNet models to mammography imaging domain
+
+model:
+  backbone: swin_base
+  pretrained: true
+  input_channels: 1
+  target_resolution: 512
+  channel_strategy: average
+  use_fpn: false
+  num_classes: 2
+
+adaptation:
+  strategy: dann  # dann, mmd, combined, coral
+  weight: 1.0
+
+  dann:
+    hidden_dim: 1024
+    dropout: 0.2
+    lambda_schedule: exp   # linear, exp, step
+    max_lambda: 1.0
+
+  mmd:
+    kernel_bandwidths: [0.01, 0.1, 1.0, 10.0, 100.0]
+    loss_weight: 0.5
+
+  style_transfer:
+    use_fda: true
+    fda_beta: 0.05
+    fda_random_beta: true
+    use_histogram: false
+    use_adabn: true
+    adabn_batches: 100
+
+progressive:
+  use_unfreezing: true
+  warmup_epochs: 5
+  unfreeze_every: 5
+  lr_decay_factor: 0.65
+
+  resolution_scaling:
+    enabled: true
+    stages:
+      - [0, 224]
+      - [20, 384]
+      - [40, 512]
+
+training:
+  epochs: 100
+  batch_size: 32
+  base_lr: 0.001
+  weight_decay: 0.01
+  min_lr: 0.0000001
+  use_amp: true
+  num_workers: 4
+  patience: 20
+  log_interval: 50
+  eval_interval: 1
+  save_interval: 10
+  seed: 42
+
+data:
+  source_dir: data/imagenet_samples
+  target_dir: data/mammography
+  val_split: 0.15
+  test_split: 0.15
+  augmentation:
+    horizontal_flip: false  # laterality matters
+    vertical_flip: false
+    rotation_range: 10
+    scale_range: [0.9, 1.1]
+    elastic_deformation: true
+    intensity_shift: 0.1
+    contrast_range: [0.8, 1.2]
+
+output:
+  dir: outputs/domain_adaptation
+  save_best: true
+  save_last: true
+  log_features: true

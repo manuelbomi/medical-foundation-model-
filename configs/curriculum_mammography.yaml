@@ -1,0 +1,73 @@
+# Curriculum Learning Configuration for Mammography Classification
+
+model:
+  backbone: swin_base
+  pretrained: true
+  input_channels: 1
+  target_resolution: 512
+  channel_strategy: average
+  num_classes: 2
+
+curriculum:
+  strategy: self_paced  # difficulty, self_paced, anti_curriculum, teacher_student
+
+  difficulty_based:
+    initial_fraction: 0.3
+    pacing: sqrt  # linear, sqrt, log, step
+
+  self_paced:
+    initial_threshold: 0.3
+    growth_rate: 0.05
+    min_samples_fraction: 0.2
+    momentum: 0.9
+
+  anti_curriculum:
+    hard_fraction: 0.3
+    transition_epoch: 0.4
+
+  teacher_student:
+    teacher_checkpoint: checkpoints/teacher_model.pt
+    confidence_weight: 0.5
+    initial_fraction: 0.4
+
+  difficulty_scoring:
+    method: ensemble  # loss, uncertainty, data_complexity, radiologist, ensemble
+    loss_epochs: 5
+    mc_dropout_passes: 20
+    uncertainty_metric: entropy  # entropy, variance, mutual_info
+    ensemble_weights:
+      loss: 0.3
+      uncertainty: 0.3
+      data_complexity: 0.2
+      radiologist: 0.2
+
+training:
+  epochs: 100
+  batch_size: 32
+  base_lr: 0.001
+  weight_decay: 0.01
+  use_amp: true
+  num_workers: 4
+  patience: 25
+  seed: 42
+
+data:
+  train_dir: data/mammography/train
+  val_dir: data/mammography/val
+  test_dir: data/mammography/test
+  multi_site: true
+  sites:
+    - name: site_a
+      manufacturer: Hologic
+      weight: 1.0
+    - name: site_b
+      manufacturer: GE
+      weight: 1.0
+    - name: site_c
+      manufacturer: Siemens
+      weight: 1.0
+
+output:
+  dir: outputs/curriculum
+  save_difficulty_scores: true
+  plot_curriculum_progression: true
