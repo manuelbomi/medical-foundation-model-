@@ -190,7 +190,7 @@ medical-foundation-model/
 ```bibtex
 @software{medical_foundation_model,
   title={Medical Image Foundation Model: Domain Adaptation, Transfer Learning, and Curriculum Learning},
-  year={2022},
+  year={2024},
   url={https://github.com/manuelbomi/medical-foundation-model}
 }
 ```
